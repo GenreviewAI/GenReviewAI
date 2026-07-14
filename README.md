@@ -4,7 +4,7 @@
 
 ---
 
-## 🛠️ Technical Stack & Developer Skills
+##  Technical Stack & Developer Skills
 
 This project is built using a modern, scalable stack spanning Backend, Frontend, AI/ML, and Database engineering:
 
@@ -17,7 +17,7 @@ This project is built using a modern, scalable stack spanning Backend, Frontend,
 
 ---
 
-## 🚀 Key Engineering Accomplishments (ATS-Friendly)
+##  Key Engineering Accomplishments
 
 *   **Smart Feedback Routing Engine:** Designed and implemented a smart routing mechanism. Ratings $\ge$ 4.0 dynamically guide customers to generate AI-assisted Google Reviews, while ratings < 4.0 route feedback to a private owner inbox, protecting brand reputation.
 *   **RAG-Enhanced Review Generation:** Integrated Google Gemini 1.5 Flash API with a pgvector database to match review context against restaurant details (menus, special offers), generating highly accurate and customized review drafts.
@@ -52,7 +52,7 @@ This project is built using a modern, scalable stack spanning Backend, Frontend,
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 GenReviewAI/
@@ -82,7 +82,7 @@ GenReviewAI/
 
 ---
 
-## 🔧 Setup & Local Installation
+##  Setup & Local Installation
 
 ### Prerequisites
 *   Python 3.10+
@@ -129,14 +129,6 @@ GenReviewAI/
     ```
 
 ---
-
-## ☁️ Production Deployment on Render
-
-This project is Optimized for deployment on **Render** (e.g., as a Web Service).
-
-### Deployment Settings (Root Directory)
-To deploy the backend from the root of the repository:
-1.  **Runtime:** `Python 3`
 2.  **Build Command:** `pip install -r requirements.txt`
 3.  **Start Command:** `gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker`
 4.  **Environment Variables:**

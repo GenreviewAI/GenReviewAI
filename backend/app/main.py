@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -11,7 +12,6 @@ from app.ai.router import router as ai_router
 from app.dashboard.router import router as dashboard_router
 from app.rag.router import router as rag_router
 from app.analytics.router import router as analytics_router
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="GenReviewAI API",
@@ -27,7 +27,13 @@ origins = [
     "http://127.0.0.1:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3001",
+    "https://genreviewai-frontend.onrender.com",
 ]
+
+# Allow additional origins from environment variable
+extra_origins = os.environ.get("CORS_ORIGINS", "")
+if extra_origins:
+    origins.extend([o.strip() for o in extra_origins.split(",") if o.strip()])
 
 app.add_middleware(
     CORSMiddleware,

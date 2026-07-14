@@ -2,12 +2,6 @@
 
 > **Turn every visit into a review** — AI-powered restaurant review generation and sentiment analytics platform.
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-
 ---
 
 ## 📌 About
@@ -222,12 +216,6 @@ npm run dev
    - Write private feedback sent directly to the owner
    - Option to still post on Google if desired
 
----
-
-## 🤝 Contributors
-
-- **Vishwa Bhandare** — Project Lead
-- **Sandesh Rathod** — Backend & ML Development
 
 ---
 
@@ -236,7 +224,3 @@ npm run dev
 This project is for educational and demonstration purposes.
 
 ---
-
-<p align="center">
-  Built with ❤️ using FastAPI, Next.js, Gemini AI & Supabase
-</p>

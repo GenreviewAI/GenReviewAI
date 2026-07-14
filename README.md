@@ -132,7 +132,7 @@ GenReviewAI/
 
 ## ☁️ Production Deployment on Render
 
-This project is optimized for deployment on **Render** (e.g., as a Web Service).
+This project is Optimized for deployment on **Render** (e.g., as a Web Service).
 
 ### Deployment Settings (Root Directory)
 To deploy the backend from the root of the repository:

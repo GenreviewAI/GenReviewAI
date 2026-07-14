@@ -129,9 +129,3 @@ GenReviewAI/
     ```
 
 ---
-2.  **Build Command:** `pip install -r requirements.txt`
-3.  **Start Command:** `gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker`
-4.  **Environment Variables:**
-    *   `SUPABASE_URL`: Your Supabase Project URL
-    *   `SUPABASE_KEY` or `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase Service Role Key
-    *   `GEMINI_API_KEY`: Your Google Gemini API Key

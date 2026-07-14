@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.auth.router import router as auth_router
 from app.restaurant.router import router as restaurant_router
@@ -16,7 +18,27 @@ app = FastAPI(
     description="AI Powered Review Management System"
 )
 
+# ==========================
+# CORS Configuration
+# ==========================
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ==========================
+# Home Route
+# ==========================
 @app.get("/")
 def home():
     return {
@@ -24,7 +46,9 @@ def home():
         "message": "GenReviewAI Backend Running 🚀"
     }
 
-
+# ==========================
+# API Routers
+# ==========================
 app.include_router(auth_router)
 app.include_router(restaurant_router)
 app.include_router(qr_router)
@@ -35,6 +59,11 @@ app.include_router(dashboard_router)
 app.include_router(rag_router)
 app.include_router(analytics_router)
 
-from fastapi.staticfiles import StaticFiles
-
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# ==========================
+# Static Files
+# ==========================
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
+)

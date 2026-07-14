@@ -76,7 +76,7 @@ app.include_router(dashboard_router)
 app.include_router(rag_router)
 app.include_router(analytics_router)
 
-<<<<<<< HEAD
+
 # ==========================
 # Static Files
 # ==========================
@@ -85,8 +85,7 @@ app.mount(
     StaticFiles(directory="uploads"),
     name="uploads"
 )
-=======
 from fastapi.staticfiles import StaticFiles
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
->>>>>>> 3314ed63acc16a44553802543ba3e3b9bae72c2b
+

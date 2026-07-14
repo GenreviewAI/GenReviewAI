@@ -1,15 +1,21 @@
+import uuid
 from app.database.supabase import supabase
 
 
 def create_restaurant(data):
 
+    biz_res = supabase.table("businesses").select("id").limit(1).execute()
+    business_id = biz_res.data[0]["id"] if biz_res.data else "3a19a62a-8b64-4b77-8bc0-728feb597dd6"
+
+    restaurant_id = str(uuid.uuid4())
+
     result = (
         supabase.table("restaurants")
         .insert(
             {
-                "owner_id": data.owner_id,
-                "restaurant_name": data.restaurant_name,
-                "brand_name": data.brand_name,
+                "id": restaurant_id,
+                "business_id": business_id,
+                "name": data.restaurant_name,
                 "cuisine": data.category,
                 "phone": data.phone,
                 "email": data.email,
@@ -17,6 +23,9 @@ def create_restaurant(data):
                 "city": data.city,
                 "state": data.state,
                 "country": data.country,
+                "google_review_url": data.google_review_link,
+                "rating_threshold": data.rating_threshold,
+                "status": "active"
             }
         )
         .execute()
@@ -55,5 +64,6 @@ def get_google_review_url(restaurant_id: str):
 
     return {
         "success": True,
-        "google_review_url": google_review_url
+        "google_review_link": google_review_url,
+        "url": google_review_url
     }

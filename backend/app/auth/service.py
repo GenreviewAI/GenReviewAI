@@ -20,14 +20,23 @@ def register_user(data):
 
     hashed_password = hash_password(data.password)
 
+    # Fetch a default organization and role from the database
+    orgs_res = supabase.table("organizations").select("id").limit(1).execute()
+    roles_res = supabase.table("roles").select("id").eq("name", "business_owner").execute()
+    
+    org_id = orgs_res.data[0]["id"] if orgs_res.data else "00000000-0000-0000-0000-000000000000"
+    role_id = roles_res.data[0]["id"] if roles_res.data else "a2f06723-49c7-4851-a429-7c4a99a3d5ad"
+
     result = (
         supabase.table("users")
         .insert(
             {
-                "full_name": data.full_name,
+                "name": data.full_name,
                 "email": data.email,
-                "password_hash": hashed_password,
-                "phone": data.phone,
+                "hashed_password": hashed_password,
+                "org_id": org_id,
+                "role_id": role_id,
+                "is_active": True
             }
         )
         .execute()
@@ -57,7 +66,7 @@ def login_user(data: LoginRequest):
 
     user = result.data[0]
 
-    if not verify_password(data.password, user["password_hash"]):
+    if not verify_password(data.password, user["hashed_password"]):
         return {
             "success": False,
             "message": "Invalid email or password"
@@ -68,8 +77,8 @@ def login_user(data: LoginRequest):
         "message": "Login successful",
         "user": {
             "id": user["id"],
-            "full_name": user["full_name"],
+            "full_name": user["name"],
             "email": user["email"],
-            "phone": user["phone"]
+            "phone": user.get("phone", "")
         }
     }

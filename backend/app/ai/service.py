@@ -73,5 +73,6 @@ Instructions:
     return {
         "success": True,
         "rag_context": restaurant_context,
-        "review_options": reviews
+        "review_options": reviews,
+        "drafts": reviews
     }

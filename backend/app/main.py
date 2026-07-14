@@ -19,7 +19,6 @@ app = FastAPI(
     description="AI Powered Review Management System"
 )
 
-<<<<<<< HEAD
 # ==========================
 # CORS Configuration
 # ==========================
@@ -29,21 +28,6 @@ origins = [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
 ]
-=======
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
->>>>>>> 3314ed63acc16a44553802543ba3e3b9bae72c2b
 
 app.add_middleware(
     CORSMiddleware,
@@ -85,7 +69,4 @@ app.mount(
     StaticFiles(directory="uploads"),
     name="uploads"
 )
-from fastapi.staticfiles import StaticFiles
-
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 

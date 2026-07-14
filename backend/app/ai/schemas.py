@@ -1,7 +1,6 @@
 from pydantic import BaseModel
-from uuid import UUID
 
 class GenerateReviewRequest(BaseModel):
-    restaurant_id: UUID
+    restaurant_id: str
     rating: int
     selected_tags: list[str]

@@ -21,7 +21,10 @@ def get_tags(restaurant_id: str):
         else:
             negative.append(tag["tag_name"])
 
+    tags = positive + negative
+
     return {
         "positive": positive,
-        "negative": negative
+        "negative": negative,
+        "tags": tags
     }

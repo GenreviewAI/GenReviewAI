@@ -136,9 +136,3 @@ Open Swagger API documentation:
     Redirect to Google Review Page
 
 For low ratings or negative feedback, the system can collect private feedback for restaurant analytics.
-
-## Developer
-
-Vishwa Bhandare
-
-Data Science | AI & Machine Learning

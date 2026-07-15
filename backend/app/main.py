@@ -1,7 +1,8 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 from app.auth.router import router as auth_router
 from app.restaurant.router import router as restaurant_router
@@ -18,6 +19,19 @@ app = FastAPI(
     version="1.0.0",
     description="AI Powered Review Management System"
 )
+
+# ==========================
+# Global Exception Handler
+# (ensures errors always return JSON with CORS headers)
+# ==========================
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"[GLOBAL ERROR] {request.method} {request.url}: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "message": f"Internal server error: {str(exc)}"},
+    )
+
 
 # ==========================
 # CORS Configuration
@@ -55,6 +69,25 @@ def home():
     return {
         "status": "success",
         "message": "GenReviewAI Backend Running 🚀"
+    }
+
+@app.get("/health")
+def health():
+    """Check which environment variables are loaded on this server."""
+    supabase_url = os.environ.get("SUPABASE_URL", "")
+    anon_key = os.environ.get("SUPABASE_ANON_KEY", "")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+    gemini_key = os.environ.get("GEMINI_API_KEY", "")
+    resend_key = os.environ.get("RESEND_API_KEY", "")
+    return {
+        "status": "ok",
+        "env": {
+            "SUPABASE_URL": supabase_url[:30] + "..." if supabase_url else "❌ MISSING",
+            "SUPABASE_ANON_KEY": anon_key[:15] + "..." if anon_key else "❌ MISSING",
+            "SUPABASE_SERVICE_ROLE_KEY": service_key[:15] + "..." if service_key else "❌ MISSING",
+            "GEMINI_API_KEY": gemini_key[:10] + "..." if gemini_key else "❌ MISSING",
+            "RESEND_API_KEY": resend_key[:10] + "..." if resend_key else "❌ MISSING",
+        }
     }
 
 # ==========================

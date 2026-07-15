@@ -15,21 +15,22 @@ DEFAULT_FROM_EMAIL = "GenReviewAI <onboarding@resend.dev>"
 def get_owner_email_for_restaurant(restaurant_id: str) -> tuple[str | None, str | None]:
     """Look up the owner's email for a given restaurant directly via owner_id."""
     try:
-        res = supabase.table("restaurants").select("owner_id, restaurant_name").eq("id", restaurant_id).single().execute()
+        res = supabase.table("restaurants").select("owner_id, restaurant_name, email").eq("id", restaurant_id).single().execute()
         if not res.data:
             return None, None
         owner_id = res.data.get("owner_id")
         restaurant_name = res.data.get("restaurant_name", "Your Restaurant")
+        restaurant_email = res.data.get("email")
 
         if not owner_id:
-            return None, restaurant_name
+            return restaurant_email, restaurant_name
 
         # Get owner email from users
         user_res = supabase.table("users").select("email").eq("id", owner_id).single().execute()
-        if not user_res.data:
-            return None, restaurant_name
+        if user_res.data and user_res.data.get("email"):
+            return user_res.data.get("email"), restaurant_name
 
-        return user_res.data.get("email"), restaurant_name
+        return restaurant_email, restaurant_name
     except Exception as e:
         print(f"[Email] Error looking up owner email: {e}")
         return None, None

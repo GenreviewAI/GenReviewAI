@@ -9,5 +9,5 @@ router = APIRouter(
 
 
 @router.post("/generate/{restaurant_id}")
-def generate(restaurant_id: str):
-    return generate_qr(restaurant_id)
+def generate(restaurant_id: str, force_reset: bool = False):
+    return generate_qr(restaurant_id, force_reset)

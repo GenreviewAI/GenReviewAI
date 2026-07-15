@@ -111,14 +111,15 @@ export const api = {
         restaurant_name?: string;
         brand_name?: string;
         short_code: string;
-        google_review_link?: string;
+        google_review_url?: string;
         rating_threshold?: number;
+        theme_name?: string;
       };
     }>(`/restaurant/short-code/${shortCode}`),
 
   // QR
-  generateQr: (restaurantId: string) =>
-    request(`/qr/generate/${restaurantId}`, { method: "POST" }),
+  generateQr: (restaurantId: string, forceReset: boolean = false) =>
+    request(`/qr/generate/${restaurantId}?force_reset=${forceReset}`, { method: "POST" }),
 
   // Review
   submitReview: (body: {

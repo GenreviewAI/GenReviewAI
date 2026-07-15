@@ -72,9 +72,14 @@ export default function QrPage() {
     const rid = localStorage.getItem("gr_restaurant_id");
     const rname = localStorage.getItem("gr_restaurant_name") || "";
     const sc = localStorage.getItem("gr_restaurant_short_code");
+    const savedTheme = localStorage.getItem("gr_active_theme");
     setRestaurantId(rid);
     setRestaurantName(rname);
     setShortCode(sc);
+    if (savedTheme) {
+      const theme = QR_THEMES.find((item) => item.name === savedTheme);
+      if (theme) setSelectedTheme(theme);
+    }
     if (sc) {
       setReviewUrl(`${window.location.origin}/r/${sc}`);
     }

@@ -41,6 +41,44 @@ def create_restaurant(data):
     }
 
 
+def list_restaurants(owner_id: str):
+    result = (
+        supabase.table("restaurants")
+        .select("id, restaurant_name, brand_name, cuisine, phone, email, address, city, state, country, google_review_url, short_code, is_active")
+        .eq("owner_id", owner_id)
+        .execute()
+    )
+    return {
+        "success": True,
+        "restaurants": result.data or []
+    }
+
+
+def update_restaurant(restaurant_id: str, data):
+    result = (
+        supabase.table("restaurants")
+        .update({
+            "restaurant_name": data.restaurant_name,
+            "brand_name": data.brand_name or data.restaurant_name,
+            "cuisine": data.category,
+            "phone": data.phone,
+            "email": data.email,
+            "address": data.address,
+            "city": data.city,
+            "state": data.state,
+            "country": data.country,
+            "google_review_url": data.google_review_link,
+        })
+        .eq("id", restaurant_id)
+        .execute()
+    )
+    return {
+        "success": True,
+        "message": "Restaurant updated successfully",
+        "restaurant": result.data[0] if result.data else None,
+    }
+
+
 def get_google_review_url(restaurant_id: str):
 
     restaurant_id = resolve_restaurant_id(restaurant_id)

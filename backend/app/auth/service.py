@@ -1,9 +1,30 @@
 from app.database.supabase import supabase
 from app.auth.security import hash_password, verify_password
-from app.schemas.auth import LoginRequest
+from app.schemas.auth import (
+    EmailChangeRequest,
+    ForgotPasswordRequest,
+    LoginRequest,
+    PasswordChangeRequest,
+    ProfileUpdateRequest,
+)
+
+
+def _password_is_strong(password: str) -> bool:
+    return (
+        len(password) >= 8
+        and any(ch.isupper() for ch in password)
+        and any(ch.islower() for ch in password)
+        and any(ch.isdigit() for ch in password)
+    )
 
 
 def register_user(data):
+    if not _password_is_strong(data.password):
+        return {
+            "success": False,
+            "message": "Password must be at least 8 characters and include uppercase, lowercase, and a number"
+        }
+
     existing = (
         supabase.table("users")
         .select("*")
@@ -89,4 +110,73 @@ def login_user(data: LoginRequest):
             "restaurant_name": restaurant_name,
             "restaurant_short_code": restaurant_short_code,
         }
+    }
+
+
+def update_profile(data: ProfileUpdateRequest):
+    result = (
+        supabase.table("users")
+        .update({
+            "full_name": data.full_name,
+            "phone": data.phone,
+        })
+        .eq("id", data.user_id)
+        .execute()
+    )
+    return {
+        "success": True,
+        "message": "Profile updated successfully",
+        "user": result.data[0] if result.data else None,
+    }
+
+
+def change_email(data: EmailChangeRequest):
+    user_res = supabase.table("users").select("*").eq("id", data.user_id).limit(1).execute()
+    if not user_res.data:
+        return {"success": False, "message": "User not found"}
+
+    user = user_res.data[0]
+    if not verify_password(data.current_password, user["password_hash"]):
+        return {"success": False, "message": "Current password is incorrect"}
+
+    existing = supabase.table("users").select("id").eq("email", data.new_email).execute()
+    if existing.data and existing.data[0]["id"] != data.user_id:
+        return {"success": False, "message": "Email is already in use"}
+
+    supabase.table("users").update({"email": data.new_email}).eq("id", data.user_id).execute()
+    return {"success": True, "message": "Email updated successfully"}
+
+
+def change_password(data: PasswordChangeRequest):
+    if not _password_is_strong(data.new_password):
+        return {
+            "success": False,
+            "message": "New password must be at least 8 characters and include uppercase, lowercase, and a number"
+        }
+
+    user_res = supabase.table("users").select("*").eq("id", data.user_id).limit(1).execute()
+    if not user_res.data:
+        return {"success": False, "message": "User not found"}
+
+    user = user_res.data[0]
+    if not verify_password(data.current_password, user["password_hash"]):
+        return {"success": False, "message": "Current password is incorrect"}
+
+    supabase.table("users").update({"password_hash": hash_password(data.new_password)}).eq("id", data.user_id).execute()
+    return {"success": True, "message": "Password updated successfully"}
+
+
+def forgot_password(data: ForgotPasswordRequest):
+    # Do not reveal whether the email exists. This prevents account enumeration.
+    try:
+        user_res = supabase.table("users").select("id, email, full_name").eq("email", data.email).limit(1).execute()
+        if user_res.data:
+            from app.email.service import send_password_reset_notice
+            send_password_reset_notice(data.email, user_res.data[0].get("full_name", "Owner"))
+    except Exception as e:
+        print(f"[Auth] Forgot password notice failed: {e}")
+
+    return {
+        "success": True,
+        "message": "If this email is registered, reset instructions will be sent."
     }

@@ -14,3 +14,16 @@ class RestaurantCreate(BaseModel):
     country: str
     google_review_link: str
     rating_threshold: float = 4.0
+
+
+class RestaurantUpdate(BaseModel):
+    restaurant_name: str
+    brand_name: str | None = None
+    category: str
+    phone: str
+    email: str
+    address: str
+    city: str
+    state: str
+    country: str
+    google_review_link: str

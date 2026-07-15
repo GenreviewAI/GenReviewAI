@@ -123,3 +123,33 @@ def send_new_review_notification(
     except Exception as e:
         print(f"[Email] Failed to send notification: {e}")
         return {"success": False, "message": str(e)}
+
+
+def send_password_reset_notice(email: str, full_name: str = "Owner"):
+    """Send a password reset notice. The app currently directs owners to contact support/admin."""
+    if not _configure_resend():
+        print("[Email] RESEND_API_KEY not set. Skipping password reset notice.")
+        return {"success": False, "message": "RESEND_API_KEY not configured"}
+
+    safe_name = escape(full_name or "Owner")
+    html_body = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; border: 1px solid #e5d6c2; padding: 24px;">
+      <h1 style="margin-top: 0; color: #241A14;">Password reset requested</h1>
+      <p>Hello {safe_name},</p>
+      <p>We received a request to reset your GenReviewAI password.</p>
+      <p>For security, please contact your admin or support owner to verify the account and set a new password.</p>
+      <p>If you did not request this, you can ignore this email.</p>
+    </div>
+    """
+
+    try:
+        email_res = resend.Emails.send({
+            "from": os.environ.get("RESEND_FROM_EMAIL", DEFAULT_FROM_EMAIL),
+            "to": [email],
+            "subject": "GenReviewAI password reset request",
+            "html": html_body,
+        })
+        return {"success": True, "message": "Password reset notice sent", "id": str(email_res)}
+    except Exception as e:
+        print(f"[Email] Failed to send password reset notice: {e}")
+        return {"success": False, "message": str(e)}

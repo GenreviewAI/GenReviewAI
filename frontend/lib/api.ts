@@ -64,9 +64,32 @@ export const api = {
       { method: "POST", body: JSON.stringify(body) }
     ),
 
+  updateProfile: (body: { user_id: string; full_name: string; phone: string }) =>
+    request("/auth/profile/update", { method: "POST", body: JSON.stringify(body) }),
+
+  changeEmail: (body: { user_id: string; new_email: string; current_password: string }) =>
+    request("/auth/email/change", { method: "POST", body: JSON.stringify(body) }),
+
+  changePassword: (body: { user_id: string; current_password: string; new_password: string }) =>
+    request("/auth/password/change", { method: "POST", body: JSON.stringify(body) }),
+
+  forgotPassword: (body: { email: string }) =>
+    request("/auth/password/forgot", { method: "POST", body: JSON.stringify(body) }),
+
   // Restaurant
   createRestaurant: (body: Record<string, unknown>) =>
     request("/restaurant/create", { method: "POST", body: JSON.stringify(body) }),
+
+  listRestaurants: (ownerId: string) =>
+    request<{ success: boolean; restaurants: Record<string, any>[] }>(
+      `/restaurant/owner/${ownerId}`
+    ),
+
+  updateRestaurant: (restaurantId: string, body: Record<string, unknown>) =>
+    request(`/restaurant/${restaurantId}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
 
   getGoogleReviewUrl: (restaurantId: string) =>
     request<{ google_review_link?: string; url?: string }>(

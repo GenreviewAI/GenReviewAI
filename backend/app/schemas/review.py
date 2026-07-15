@@ -12,5 +12,5 @@ class ReviewRequest(BaseModel):
 class PrivateFeedbackRequest(BaseModel):
     restaurant_id: str
     customer_name: str
-    rating: int = Field(..., ge=1, le=3)
+    rating: int = Field(..., ge=1, le=5)
     feedback_text: str

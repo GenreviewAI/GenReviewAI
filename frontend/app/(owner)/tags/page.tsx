@@ -41,6 +41,7 @@ export default function TagsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = "Review Tags Manager | GenReviewAI";
     const restaurantId = localStorage.getItem("gr_restaurant_id");
     if (!restaurantId) {
       setError("No restaurant is linked to this account yet.");

@@ -72,6 +72,7 @@ export default function SettingsPage() {
   }, [activePalette, ownerEmail, ownerPhone, restaurants.length]);
 
   useEffect(() => {
+    document.title = "Restaurant & Account Settings | GenReviewAI";
     const id = localStorage.getItem("gr_owner_id") || "";
     const currentRestaurantId = localStorage.getItem("gr_restaurant_id");
     const localRestaurantName = localStorage.getItem("gr_restaurant_name") || "Current restaurant";
@@ -386,6 +387,7 @@ export default function SettingsPage() {
                   <p className="mt-1 text-sm text-ink-soft">Switch between outlets or add a new branch.</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setActiveRestaurantId(null);
                     setForm({});
@@ -415,6 +417,7 @@ export default function SettingsPage() {
                         <p className="mt-2 font-mono text-[11px] font-semibold text-paprika">{restaurant.short_code || "No QR yet"}</p>
                       </div>
                       <button
+                        type="button"
                         onClick={() => selectRestaurant(restaurant)}
                         className="border border-line px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-paprika hover:text-paprika bg-paper"
                       >
@@ -516,6 +519,7 @@ export default function SettingsPage() {
                 Confirm your Resend SMTP configuration is working properly by sending a simulated low-rating review notification.
               </p>
               <button
+                type="button"
                 onClick={handleTestEmail}
                 disabled={sendingTest || !activeRestaurantId}
                 className="mt-4 w-full border border-ink bg-paper px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-ink hover:bg-ink hover:text-paper transition-all disabled:opacity-50"
@@ -534,6 +538,7 @@ export default function SettingsPage() {
                   Permanently delete this restaurant. This deletes its custom QR codes, RAG knowledge bases, public reviews, and private feedback logs. This action is irreversible.
                 </p>
                 <button
+                  type="button"
                   onClick={handleDeleteRestaurant}
                   className="mt-4 w-full bg-plum text-paper px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-plum-dark transition-all"
                 >
@@ -567,6 +572,7 @@ export default function SettingsPage() {
                 </label>
               </div>
               <button
+                type="button"
                 onClick={handleProfileSave}
                 className="mt-5 bg-ink px-5 py-2.5 text-sm font-semibold tracking-wide text-paper hover:bg-ink-soft uppercase transition-all"
               >
@@ -601,12 +607,14 @@ export default function SettingsPage() {
               
               <div className="mt-4 flex gap-3">
                 <button
+                  type="button"
                   onClick={handleEmailChange}
                   className="border border-ink px-5 py-2.5 text-sm font-semibold tracking-wide text-ink hover:bg-ink hover:text-paper uppercase transition-all"
                 >
                   Change email
                 </button>
                 <button
+                  type="button"
                   onClick={handleForgotPassword}
                   className="border border-transparent px-4 py-2.5 text-sm font-semibold text-ink-faint hover:text-ink underline underline-offset-4"
                 >
@@ -638,6 +646,7 @@ export default function SettingsPage() {
                 </label>
               </div>
               <button
+                type="button"
                 onClick={handlePasswordChange}
                 className="mt-5 bg-paprika px-5 py-2.5 text-sm font-semibold tracking-wide text-paper hover:bg-paprika-dark uppercase transition-all"
               >

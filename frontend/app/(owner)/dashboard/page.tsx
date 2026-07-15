@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const [restaurantId, setRestaurantId] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = "Owner Dashboard | GenReviewAI";
     const rid = localStorage.getItem("gr_restaurant_id");
     const oname = localStorage.getItem("gr_owner_name") || "";
     const rname = localStorage.getItem("gr_restaurant_name") || "";
@@ -153,6 +154,34 @@ export default function DashboardPage() {
                       <p className="mt-1 text-[11px] text-ink-faint font-mono">
                         {r.created_at ? new Date(r.created_at).toLocaleString() : ""}
                       </p>
+                      {r.ai_recovery && (
+                        <div className="mt-4 border border-sage/30 bg-sage-light/5 p-4 rounded-sm max-w-2xl text-left">
+                          <p className="text-[10px] font-semibold text-sage-dark flex items-center gap-1.5 font-mono uppercase tracking-wide">
+                            <span className="h-1.5 w-1.5 rounded-full bg-sage" />
+                            AI Detractor Recovery Plan
+                          </p>
+                          <div className="mt-2.5 space-y-2 text-xs">
+                            <div>
+                              <span className="font-semibold text-ink-soft block">Suggested Apology Response:</span>
+                              <p className="mt-1 text-ink italic leading-relaxed">"{r.ai_recovery.apology_draft}"</p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(r.ai_recovery?.apology_draft || "");
+                                  alert("Apology draft copied to clipboard!");
+                                }}
+                                className="mt-1 text-[10px] text-paprika hover:underline outline-none"
+                              >
+                                Copy Apology Draft
+                              </button>
+                            </div>
+                            <div className="pt-2 border-t border-line/40">
+                              <span className="font-semibold text-ink-soft block">Operational Action Item:</span>
+                              <p className="mt-1 text-ink-soft leading-relaxed">{r.ai_recovery.action_item}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <SentimentPill sentiment={r.sentiment} />
                   </div>

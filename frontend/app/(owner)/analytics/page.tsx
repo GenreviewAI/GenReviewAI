@@ -14,6 +14,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Analytics & Reports | GenReviewAI";
     const restaurantId = localStorage.getItem("gr_restaurant_id");
     if (!restaurantId) {
       setError("No restaurant is linked to this account yet.");

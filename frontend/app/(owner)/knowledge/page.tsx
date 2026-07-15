@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api";
 import PageHeader from "@/components/PageHeader";
 
@@ -29,6 +29,10 @@ const EXAMPLE_KNOWLEDGE: Record<string, string> = {
 };
 
 export default function KnowledgePage() {
+  useEffect(() => {
+    document.title = "Restaurant Knowledge Base | GenReviewAI";
+  }, []);
+
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState<string | null>(null);

@@ -41,6 +41,10 @@ export interface RecentReview {
   sentiment?: Sentiment;
   is_private?: boolean;
   created_at?: string;
+  ai_recovery?: {
+    apology_draft: string;
+    action_item: string;
+  };
 }
 
 export interface DashboardResponse {

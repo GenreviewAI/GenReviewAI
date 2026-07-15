@@ -82,6 +82,7 @@ export default function QrPage() {
   const [showAddress, setShowAddress] = useState(false);
 
   useEffect(() => {
+    document.title = "Review QR Card Generator | GenReviewAI";
     const ownerId = localStorage.getItem("gr_owner_id") || "";
     const activeId = localStorage.getItem("gr_restaurant_id") || "";
 
@@ -318,6 +319,7 @@ export default function QrPage() {
 
           <div className="mt-6 space-y-2">
             <button
+              type="button"
               onClick={handleGenerate}
               disabled={loading || !restaurantId}
               className="w-full bg-paprika px-5 py-3 text-sm font-semibold text-paper tracking-wider uppercase hover:bg-paprika-dark disabled:opacity-60 transition-all"
@@ -337,6 +339,7 @@ export default function QrPage() {
             )}
             {shortCode && (
               <button
+                type="button"
                 onClick={handleGenerate}
                 disabled={loading}
                 className="w-full border border-line px-5 py-2.5 text-sm font-semibold text-ink-soft hover:border-ink hover:text-ink hover:bg-paper-dim uppercase transition-all"

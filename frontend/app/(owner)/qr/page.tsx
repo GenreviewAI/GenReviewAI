@@ -94,6 +94,10 @@ export default function QrPage() {
           if (list.length > 0) {
             const target = list.find(r => r.id === activeId) || list[0];
             selectRestaurant(target);
+            // If restaurant has no short_code yet, silently generate one
+            if (!target.short_code) {
+              setTimeout(() => handleGenerate(false), 100);
+            }
           }
         })
         .catch((err) => {
@@ -110,11 +114,14 @@ export default function QrPage() {
     
     const sc = restaurant.short_code || null;
     setShortCode(sc);
-    setQrCodePath(restaurant.qr_code_url || null);
-    
+
     if (sc) {
+      // Always derive QR path live from short_code — no button click needed
+      const livePath = `qr/image/${sc}.png`;
+      setQrCodePath(restaurant.qr_code_url || livePath);
       setReviewUrl(`${window.location.origin}/r/${sc}`);
     } else {
+      setQrCodePath(null);
       setReviewUrl(null);
     }
 
@@ -162,11 +169,13 @@ export default function QrPage() {
     }
   }
 
-  const resolvedSrc = qrCodePath
-    ? qrCodePath.startsWith("http")
-      ? qrCodePath
-      : `${BASE_URL}/${qrCodePath.replace(/\\/g, "/")}`
-    : undefined;
+  const resolvedSrc = shortCode
+    ? `${BASE_URL}/qr/image/${shortCode}.png`
+    : qrCodePath
+      ? qrCodePath.startsWith("http")
+        ? qrCodePath
+        : `${BASE_URL}/${qrCodePath.replace(/\\/g, "/")}`
+      : undefined;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -325,24 +334,26 @@ export default function QrPage() {
           </div>
 
           <div className="mt-6 space-y-2">
-            <button
-              type="button"
-              onClick={() => handleGenerate(false)}
-              disabled={loading || !restaurantId}
-              className="w-full bg-paprika px-5 py-3 text-sm font-semibold text-paper tracking-wider uppercase hover:bg-paprika-dark disabled:opacity-60 transition-all"
-            >
-              {loading ? "Generating QR..." : shortCode ? "Keep current QR active" : "Create review QR"}
-            </button>
-            {resolvedSrc && (
+            {/* Always show Download if QR is live */}
+            {resolvedSrc ? (
               <a
                 href={resolvedSrc}
                 download={`${restaurantName.replace(/\s+/g, "_")}_QR.png`}
                 target="_blank"
                 rel="noreferrer"
-                className="block w-full bg-ink px-5 py-3 text-center text-sm font-semibold tracking-wider text-paper hover:bg-ink-soft uppercase transition-all"
+                className="block w-full bg-paprika px-5 py-3 text-center text-sm font-semibold tracking-wider text-paper hover:bg-paprika-dark uppercase transition-all"
               >
-                Download QR Image
+                ⬇ Download QR for Print
               </a>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleGenerate(false)}
+                disabled={loading || !restaurantId}
+                className="w-full bg-paprika px-5 py-3 text-sm font-semibold text-paper tracking-wider uppercase hover:bg-paprika-dark disabled:opacity-60 transition-all"
+              >
+                {loading ? "Generating QR..." : "Create review QR"}
+              </button>
             )}
             {shortCode && (
               <button
@@ -351,7 +362,7 @@ export default function QrPage() {
                 disabled={loading}
                 className="w-full border border-line px-5 py-2.5 text-sm font-semibold text-ink-soft hover:border-ink hover:text-ink hover:bg-paper-dim uppercase transition-all"
               >
-                Reset and create new QR
+                {loading ? "Resetting..." : "Reset and create new QR"}
               </button>
             )}
             {error && <p className="mt-4 text-xs text-plum-dark font-medium">{error}</p>}

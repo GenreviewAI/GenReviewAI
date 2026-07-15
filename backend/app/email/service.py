@@ -25,10 +25,13 @@ def get_owner_email_for_restaurant(restaurant_id: str) -> tuple[str | None, str 
         if not owner_id:
             return restaurant_email, restaurant_name
 
-        # Get owner email from users
-        user_res = supabase.table("users").select("email").eq("id", owner_id).single().execute()
-        if user_res.data and user_res.data.get("email"):
-            return user_res.data.get("email"), restaurant_name
+        # Get owner email from users safely with fallback to restaurant_email if query fails
+        try:
+            user_res = supabase.table("users").select("email").eq("id", owner_id).single().execute()
+            if user_res.data and user_res.data.get("email"):
+                return user_res.data.get("email"), restaurant_name
+        except Exception as ue:
+            print(f"[Email] Safe warning: could not look up user {owner_id}: {ue}")
 
         return restaurant_email, restaurant_name
     except Exception as e:
@@ -122,7 +125,25 @@ def send_new_review_notification(
         return {"success": True, "message": f"Email sent to {owner_email}", "id": str(email_res)}
 
     except Exception as e:
-        print(f"[Email] Failed to send notification: {e}")
+        print(f"[Email] Failed to send notification to {owner_email}: {e}")
+        
+        # Safe fallback for Resend Sandbox: send to sender or alert email
+        fallback_email = os.environ.get("RESEND_ALERT_TO_EMAIL") or os.environ.get("RESEND_FROM_EMAIL") or DEFAULT_FROM_EMAIL
+        # Extract clean email address if in "Name <email>" format
+        clean_fallback = fallback_email
+        if "<" in fallback_email and ">" in fallback_email:
+            clean_fallback = fallback_email.split("<")[1].split(">")[0].strip()
+            
+        if clean_fallback and clean_fallback != owner_email:
+            try:
+                print(f"[Email] Retrying with verified fallback address: {clean_fallback}")
+                params["to"] = [clean_fallback]
+                params["subject"] = f"[Fallback Alert] {params['subject']}"
+                email_res = resend.Emails.send(params)
+                return {"success": True, "message": f"Sent to verified fallback {clean_fallback}", "id": str(email_res)}
+            except Exception as fe:
+                print(f"[Email] Fallback retry failed: {fe}")
+                
         return {"success": False, "message": str(e)}
 
 

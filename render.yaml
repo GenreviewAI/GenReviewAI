@@ -36,17 +36,21 @@ services:
       sizeGB: 1
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # FRONTEND — Next.js (Node.js Web Service, NOT Static)
+  # FRONTEND — Next.js (Static Site)
   # ─────────────────────────────────────────────────────────────────────────────
-  - type: web
+  - type: static
     name: genreviewai-frontend
-    runtime: node
     region: frankfurt
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    publishPath: out
+    routes:
+      - type: rewrite
+        source: /r/*
+        destination: /r/_/index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
-      - key: NODE_VERSION
-        value: "20"
       - key: NEXT_PUBLIC_API_BASE_URL
-        value: "https://genreviewai.onrender.com"
+        value: "https://genreviewai-backend.onrender.com"

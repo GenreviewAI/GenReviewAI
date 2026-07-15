@@ -84,7 +84,7 @@ def get_restaurant_by_short_code(short_code: str):
     result = (
         supabase
         .table("restaurants")
-        .select("id, restaurant_name, brand_name, short_code, google_review_url, rating_threshold, is_active")
+        .select("id, restaurant_name, brand_name, short_code, google_review_url, is_active")
         .eq("short_code", short_code.upper())
         .limit(1)
         .execute()
@@ -106,6 +106,6 @@ def get_restaurant_by_short_code(short_code: str):
             "brand_name": restaurant.get("brand_name"),
             "short_code": restaurant.get("short_code"),
             "google_review_link": restaurant.get("google_review_url"),
-            "rating_threshold": restaurant.get("rating_threshold") or 4.0,
+            "rating_threshold": 4.0,
         }
     }

@@ -22,12 +22,16 @@ app = FastAPI(
 # ==========================
 # CORS Configuration
 # ==========================
+# Allow all origins (wildcard) to prevent CORS blocks on Render.
+# Specific origins are also listed for security on production rotations.
 origins = [
+    "*",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3001",
     "https://genreviewai-frontend.onrender.com",
+    "https://genreviewai-1.onrender.com",
 ]
 
 # Allow additional origins from environment variable
@@ -37,9 +41,8 @@ if extra_origins:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_origin_regex="https://.*\\.onrender\\.com",
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

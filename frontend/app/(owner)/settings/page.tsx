@@ -429,7 +429,7 @@ export default function SettingsPage() {
                   </div>
                 ))}
                 {restaurants.length === 0 && (
-                  <p className="text-sm text-ink-faint">No restaurants yet. Click "Add restaurant" to register one.</p>
+                  <p className="text-sm text-ink-faint">No restaurants yet. Click &quot;Add restaurant&quot; to register one.</p>
                 )}
               </div>
             </section>

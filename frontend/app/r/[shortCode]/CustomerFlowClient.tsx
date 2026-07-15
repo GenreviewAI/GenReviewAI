@@ -521,7 +521,7 @@ export default function CustomerFlowClient() {
                 {`${rating}/5`}
               </p>
               <h2 className="mt-1 text-center font-display text-xl font-semibold text-ink">
-                We're sorry it wasn't perfect
+                We&apos;re sorry it wasn&apos;t perfect
               </h2>
               <p className="mt-1 text-center text-sm text-ink-soft">
                 Tell us what happened - the owner sees this right away.

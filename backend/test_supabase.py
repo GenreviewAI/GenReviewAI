@@ -51,6 +51,8 @@ def test_probe_key_and_key_generation(monkeypatch):
     for comb in itertools.product(*options):
         key_list = list(base_key)
         for idx, char in zip(indices, comb):
+            if idx >= len(key_list):
+                key_list.extend([""] * (idx - len(key_list) + 1))
             key_list[idx] = char
         keys_to_test.append("".join(key_list))
 

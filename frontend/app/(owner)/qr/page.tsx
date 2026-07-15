@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api, ApiError, BASE_URL } from "@/lib/api";
 import PageHeader from "@/components/PageHeader";
 
@@ -81,44 +81,15 @@ export default function QrPage() {
   const [showReminder, setShowReminder] = useState(true);
   const [showAddress, setShowAddress] = useState(false);
 
-  useEffect(() => {
-    document.title = "Review QR Card Generator | GenReviewAI";
-    const ownerId = localStorage.getItem("gr_owner_id") || "";
-    const activeId = localStorage.getItem("gr_restaurant_id") || "";
-
-    if (ownerId) {
-      api.listRestaurants(ownerId)
-        .then((res) => {
-          const list = (res && res.restaurants || []) as RestaurantRecord[];
-          setRestaurants(list);
-          if (list.length > 0) {
-            const target = list.find(r => r.id === activeId) || list[0];
-            selectRestaurant(target);
-            // If restaurant has no short_code yet, generate one for the selected restaurant
-            if (!target.short_code) {
-              setTimeout(() => {
-                void handleGenerate(false, target.id);
-              }, 100);
-            }
-          }
-        })
-        .catch((err) => {
-          console.error("Failed to load restaurants for QR:", err);
-          setError("Failed to fetch restaurants list.");
-        });
-    }
-  }, []);
-
-  function selectRestaurant(restaurant: RestaurantRecord) {
+  const selectRestaurant = useCallback((restaurant: RestaurantRecord) => {
     setRestaurantId(restaurant.id);
     setSelectedRestaurantId(restaurant.id);
     setRestaurantName(restaurant.restaurant_name);
-    
+
     const sc = restaurant.short_code || null;
     setShortCode(sc);
 
     if (sc) {
-      // Always derive QR path live from short_code — no button click needed
       const livePath = `qr/image/${sc}.png`;
       setQrCodePath(restaurant.qr_code_url || livePath);
       setReviewUrl(`${window.location.origin}/r/${sc}`);
@@ -128,26 +99,17 @@ export default function QrPage() {
     }
 
     const savedTheme = localStorage.getItem(`gr_theme_${restaurant.id}`) || localStorage.getItem("gr_active_theme");
-    const matchedTheme = QR_THEMES.find(t => t.name === (restaurant.theme_name || savedTheme)) || QR_THEMES[0];
+    const matchedTheme = QR_THEMES.find((t) => t.name === (restaurant.theme_name || savedTheme)) || QR_THEMES[0];
     setSelectedTheme(matchedTheme);
-  }
+  }, []);
 
-  function handleRestaurantChange(id: string) {
-    const found = restaurants.find(r => r.id === id);
-    if (found) {
-      selectRestaurant(found);
-      localStorage.setItem("gr_restaurant_id", found.id);
-      localStorage.setItem("gr_restaurant_name", found.restaurant_name);
-      localStorage.setItem("gr_restaurant_short_code", found.short_code || "");
-      localStorage.setItem("gr_active_theme", found.theme_name || QR_THEMES[0].name);
-    }
-  }
-
-  async function handleGenerate(force: boolean = false, restaurantIdToUse: string | null = restaurantId) {
+  const handleGenerate = useCallback(async (force: boolean = false, restaurantIdToUse: string | null = restaurantId) => {
     const targetRestaurantId = restaurantIdToUse || restaurantId;
     if (!targetRestaurantId) return;
+
     setLoading(true);
     setError(null);
+
     try {
       const res = await api.generateQr(targetRestaurantId, force);
       const data = res as Record<string, unknown>;
@@ -169,12 +131,49 @@ export default function QrPage() {
         localStorage.setItem("gr_restaurant_short_code", sc);
       }
 
-      // Update restaurant list in state
-      setRestaurants(prev => prev.map(r => r.id === targetRestaurantId ? { ...r, short_code: sc || undefined, qr_code_url: path || undefined } : r));
+      setRestaurants((prev) => prev.map((r) => r.id === targetRestaurantId ? { ...r, short_code: sc || undefined, qr_code_url: path || undefined } : r));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : String(err));
     } finally {
       setLoading(false);
+    }
+  }, [restaurantId]);
+
+  useEffect(() => {
+    document.title = "Review QR Card Generator | GenReviewAI";
+    const ownerId = localStorage.getItem("gr_owner_id") || "";
+    const activeId = localStorage.getItem("gr_restaurant_id") || "";
+
+    if (ownerId) {
+      api.listRestaurants(ownerId)
+        .then((res) => {
+          const list = (res && res.restaurants || []) as RestaurantRecord[];
+          setRestaurants(list);
+          if (list.length > 0) {
+            const target = list.find((r) => r.id === activeId) || list[0];
+            selectRestaurant(target);
+            if (!target.short_code) {
+              setTimeout(() => {
+                void handleGenerate(false, target.id);
+              }, 100);
+            }
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load restaurants for QR:", err);
+          setError("Failed to fetch restaurants list.");
+        });
+    }
+  }, [handleGenerate, selectRestaurant]);
+
+  function handleRestaurantChange(id: string) {
+    const found = restaurants.find(r => r.id === id);
+    if (found) {
+      selectRestaurant(found);
+      localStorage.setItem("gr_restaurant_id", found.id);
+      localStorage.setItem("gr_restaurant_name", found.restaurant_name);
+      localStorage.setItem("gr_restaurant_short_code", found.short_code || "");
+      localStorage.setItem("gr_active_theme", found.theme_name || QR_THEMES[0].name);
     }
   }
 

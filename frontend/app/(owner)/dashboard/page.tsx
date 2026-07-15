@@ -125,7 +125,7 @@ export default function DashboardPage() {
               <div className="mt-3 divide-y divide-line border border-line bg-paper">
                 {data.recent_reviews.length === 0 && (
                   <p className="px-5 py-6 text-sm text-ink-faint">
-                    No reviews yet — once your QR code gets scanned, they'll print here.
+                    No reviews yet — once your QR code gets scanned, they&apos;ll print here.
                   </p>
                 )}
                 {data.recent_reviews.map((r, i) => (
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                           <div className="mt-2.5 space-y-2 text-xs">
                             <div>
                               <span className="font-semibold text-ink-soft block">Suggested Apology Response:</span>
-                              <p className="mt-1 text-ink italic leading-relaxed">"{r.ai_recovery.apology_draft}"</p>
+                              <p className="mt-1 text-ink italic leading-relaxed">&quot;{r.ai_recovery.apology_draft}&quot;</p>
                               <button
                                 type="button"
                                 onClick={() => {

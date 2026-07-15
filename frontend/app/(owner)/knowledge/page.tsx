@@ -48,7 +48,7 @@ export default function KnowledgePage() {
     return id;
   }
 
-  function useSuggestion(label: string) {
+  function applySuggestion(label: string) {
     setContent(EXAMPLE_KNOWLEDGE[label] || label);
   }
 
@@ -156,7 +156,7 @@ export default function KnowledgePage() {
             {KNOWLEDGE_SUGGESTIONS.map((item) => (
               <button
                 key={item}
-                onClick={() => useSuggestion(item)}
+                onClick={() => applySuggestion(item)}
                 className="w-full border border-line bg-paper-dim px-4 py-3 text-left text-sm text-ink-soft hover:border-paprika hover:text-ink"
               >
                 {item}

@@ -6,7 +6,7 @@ const nextConfig = {
   trailingSlash: true,
   env: {
     // Baked-in fallback for production; override via NEXT_PUBLIC_API_BASE_URL env var on Render
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://genreviewai.onrender.com",
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://genreviewai-backend.onrender.com",
   },
 };
 

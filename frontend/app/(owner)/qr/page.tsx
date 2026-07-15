@@ -75,6 +75,11 @@ export default function QrPage() {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>("");
   const [selectedTheme, setSelectedTheme] = useState(QR_THEMES[0]);
 
+  const buildReviewUrl = useCallback((shortCode: string | null) => {
+    if (!shortCode) return null;
+    return `${window.location.origin}/r/${shortCode}`;
+  }, []);
+
   // Labels checkboxes
   const [showName, setShowName] = useState(true);
   const [showUrl, setShowUrl] = useState(true);
@@ -92,7 +97,7 @@ export default function QrPage() {
     if (sc) {
       const livePath = `qr/image/${sc}.png`;
       setQrCodePath(restaurant.qr_code_url || livePath);
-      setReviewUrl(`${window.location.origin}/r/${sc}`);
+      setReviewUrl(buildReviewUrl(sc));
     } else {
       setQrCodePath(null);
       setReviewUrl(null);
@@ -101,7 +106,7 @@ export default function QrPage() {
     const savedTheme = localStorage.getItem(`gr_theme_${restaurant.id}`) || localStorage.getItem("gr_active_theme");
     const matchedTheme = QR_THEMES.find((t) => t.name === (restaurant.theme_name || savedTheme)) || QR_THEMES[0];
     setSelectedTheme(matchedTheme);
-  }, []);
+  }, [buildReviewUrl]);
 
   const handleGenerate = useCallback(async (force: boolean = false, restaurantIdToUse: string | null = restaurantId) => {
     const targetRestaurantId = restaurantIdToUse || restaurantId;
@@ -127,7 +132,7 @@ export default function QrPage() {
       setQrCodePath(path || (sc ? `qr/image/${sc}.png` : null));
 
       if (sc) {
-        setReviewUrl(`${window.location.origin}/r/${sc}`);
+        setReviewUrl(buildReviewUrl(sc));
         localStorage.setItem("gr_restaurant_short_code", sc);
       }
 
@@ -137,7 +142,7 @@ export default function QrPage() {
     } finally {
       setLoading(false);
     }
-  }, [restaurantId]);
+  }, [buildReviewUrl, restaurantId]);
 
   useEffect(() => {
     document.title = "Review QR Card Generator | GenReviewAI";

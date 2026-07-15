@@ -6,6 +6,25 @@ import io
 from app.database.supabase import supabase, resolve_restaurant_id
 
 
+def _safe_frontend_url() -> str:
+    configured = os.environ.get("FRONTEND_URL", "").strip()
+    if configured:
+        return configured.rstrip("/")
+
+    configured = os.environ.get("NEXT_PUBLIC_FRONTEND_URL", "").strip()
+    if configured:
+        return configured.rstrip("/")
+
+    configured = os.environ.get("CORS_ORIGINS", "").strip()
+    if configured:
+        for origin in configured.split(","):
+            origin = origin.strip().rstrip("/")
+            if origin and "localhost" not in origin and "127.0.0.1" not in origin:
+                return origin
+
+    return "https://genreviewai-frontend.onrender.com"
+
+
 def _looks_like_uuid(value: str) -> bool:
     if not value:
         return False
@@ -15,22 +34,8 @@ def _looks_like_uuid(value: str) -> bool:
     except (ValueError, TypeError):
         return False
 
-def _frontend_url():
-    configured = os.environ.get("FRONTEND_URL", "").strip()
-    if configured:
-        return configured.rstrip("/")
-
-    origins = os.environ.get("CORS_ORIGINS", "")
-    for origin in origins.split(","):
-        origin = origin.strip().rstrip("/")
-        if origin and "localhost" not in origin and "127.0.0.1" not in origin:
-            return origin
-
-    return "https://genreviewai-frontend.onrender.com"
-
-
 def get_qr_image_stream(short_code: str):
-    frontend_url = _frontend_url()
+    frontend_url = _safe_frontend_url()
     review_url = f"{frontend_url}/r/{short_code}/"
     img = qrcode.make(review_url)
     buf = io.BytesIO()
@@ -69,7 +74,7 @@ def generate_qr(restaurant_id: str, force_reset: bool = False):
         
         if short_code:
             dynamic_url = f"qr/image/{short_code}.png"
-            frontend_url = _frontend_url()
+            frontend_url = _safe_frontend_url()
             review_url = f"{frontend_url}/r/{short_code}/"
             
             # If the database URL is not set or points to old local uploads disk, update it
@@ -94,7 +99,7 @@ def generate_qr(restaurant_id: str, force_reset: bool = False):
     # Generate a fresh short code
     short_code = str(uuid.uuid4())[:8].upper()
     dynamic_url = f"qr/image/{short_code}.png"
-    frontend_url = _frontend_url()
+    frontend_url = _safe_frontend_url()
     review_url = f"{frontend_url}/r/{short_code}/"
     
     supabase.table("restaurants").update(

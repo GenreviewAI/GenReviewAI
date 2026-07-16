@@ -39,6 +39,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Allow all origins (wildcard) to prevent CORS blocks on Render.
 # Specific origins are also listed for security on production rotations.
 origins = [
+    "http://localhost:10000",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",

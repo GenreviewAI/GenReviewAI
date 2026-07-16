@@ -45,6 +45,7 @@ origins = [
     "http://127.0.0.1:3001",
     "https://genreviewai-frontend.onrender.com",
     "https://genreviewai-1.onrender.com",
+    "https://genreviewai-frontend-web.onrender.com",
 ]
 
 # Allow additional origins from environment variable
